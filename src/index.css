@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-teal-accent: #64D8C5;
+  --color-teal-deep: #064D40;
+  --color-surface-secondary: #080A0A;
+  --color-text-secondary: #A5A5A5;
+  --color-text-muted: #707070;
+}
+
+@layer base {
+  html {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: var(--font-sans);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #000000;
+    color: #ffffff;
+    overflow-x: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 216, 197, 0.5);
+}
+
+/* Subtle editorial mask utilities */
+.portrait-bottom-fade {
+  mask-image: linear-gradient(to bottom, black 62%, transparent 98%);
+  -webkit-mask-image: linear-gradient(to bottom, black 62%, transparent 98%);
+}
