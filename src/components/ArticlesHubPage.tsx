@@ -148,13 +148,22 @@ export function ArticlesHubPage({
                 </div>
               </div>
 
-              <div className="space-y-6 text-sm sm:text-base leading-[1.85] text-[#D4D4D4]">
+              <div className="space-y-8 text-sm sm:text-base leading-[1.85] text-[#D4D4D4]">
                 <p className="text-base sm:text-lg text-white/95 font-normal leading-relaxed border-b border-white/10 pb-6">
                   {activeArticle.summary}
                 </p>
 
-                {activeArticle.previewParagraphs.map((para, idx) => (
-                  <p key={idx}>{para}</p>
+                {activeArticle.sections.map((section, sIdx) => (
+                  <section key={sIdx} className="space-y-4">
+                    <h2 className="font-serif text-xl sm:text-2xl font-medium text-white tracking-wide">
+                      {section.heading}
+                    </h2>
+                    <div className="space-y-4">
+                      {section.paragraphs.map((para, pIdx) => (
+                        <p key={pIdx}>{para}</p>
+                      ))}
+                    </div>
+                  </section>
                 ))}
               </div>
 
