@@ -9,23 +9,25 @@
       content="Jonathan Fanai — SEO Specialist specializing in Organic Marketing, Technical SEO, International SEO, AEO and GEO."
     />
     <meta name="author" content="Jonathan Fanai" />
+    <meta name="robots" content="index, follow" />
     <meta
       name="keywords"
       content="Jonathan Fanai, JZFANAI, SEO Specialist, Organic Marketing, Technical SEO, International SEO, SaaS Marketing, AEO, GEO, Bangalore"
     />
 
-    <!-- Canonical URL Placeholder (update to production domain before deployment) -->
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://jzfanai.com/" />
 
-    <!-- Favicon Placeholder -->
+    <!-- Favicon -->
     <link
       rel="icon"
       type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23000000'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia, serif' font-size='28' fill='%2364D8C5'%3EJF%3C/text%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23000000'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia, serif' font-size='28' fill='%2371c1ad'%3EJF%3C/text%3E%3C/svg%3E"
     />
 
     <!-- Open Graph Metadata -->
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content="en_IN" />
     <meta property="og:site_name" content="JZFANAI — Jonathan Fanai" />
     <meta property="og:title" content="Jonathan Fanai | SEO Specialist" />
     <meta
@@ -33,6 +35,8 @@
       content="Jonathan Fanai — SEO Specialist specializing in Organic Marketing, Technical SEO, International SEO, AEO and GEO."
     />
     <meta property="og:url" content="https://jzfanai.com/" />
+    <meta property="og:image" content="/assets/images/jonathan-avatar.png" />
+    <meta property="og:image:alt" content="Jonathan Fanai — SEO Specialist" />
 
     <!-- Twitter / X Card Metadata -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -41,6 +45,7 @@
       name="twitter:description"
       content="Jonathan Fanai — SEO Specialist specializing in Organic Marketing, Technical SEO, International SEO, AEO and GEO."
     />
+    <meta name="twitter:image" content="/assets/images/jonathan-avatar.png" />
 
     <!-- Editorial Typography: Cormorant Garamond, Plus Jakarta Sans, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -50,41 +55,62 @@
       rel="stylesheet"
     />
 
-    <!-- Schema.org Structured Data (Person & ProfilePage) -->
-    <script type="application/ld+json">
+    <!-- Schema.org Structured Data (WebSite, ProfilePage & Person) -->
+    <script id="dynamic-json-ld" type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "ProfilePage",
-        "mainEntity": {
-          "@type": "Person",
-          "name": "Jonathan Fanai",
-          "alternateName": "JZFANAI",
-          "jobTitle": "SEO Specialist",
-          "worksFor": {
-            "@type": "Organization",
-            "name": "ESKO Graphics Pvt. Ltd."
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://jzfanai.com/#website",
+            "url": "https://jzfanai.com/",
+            "name": "JZFANAI — Jonathan Fanai",
+            "description": "Jonathan Fanai — SEO Specialist specializing in Organic Marketing, Technical SEO, International SEO, AEO and GEO."
           },
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "JP Nagar 1st Phase",
-            "addressLocality": "Bangalore",
-            "addressRegion": "Karnataka",
-            "postalCode": "560060",
-            "addressCountry": "IN"
-          },
-          "email": "mailto:jzfanai@gmail.com",
-          "telephone": "+918837238364",
-          "knowsAbout": [
-            "Search Engine Optimization",
-            "International SEO",
-            "Technical SEO",
-            "Local SEO",
-            "SaaS Marketing",
-            "Answer Engine Optimization",
-            "Generative Engine Optimization",
-            "Online Reputation Management"
-          ]
-        }
+          {
+            "@type": "ProfilePage",
+            "@id": "https://jzfanai.com/#profilepage",
+            "url": "https://jzfanai.com/",
+            "isPartOf": { "@id": "https://jzfanai.com/#website" },
+            "mainEntity": {
+              "@type": "Person",
+              "@id": "https://jzfanai.com/#person",
+              "name": "Jonathan Fanai",
+              "alternateName": "JZFANAI",
+              "url": "https://jzfanai.com/",
+              "image": "https://jzfanai.com/assets/images/jonathan-avatar.png",
+              "jobTitle": "SEO Specialist",
+              "worksFor": {
+                "@type": "Organization",
+                "name": "ESKO Graphics Pvt. Ltd."
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "JP Nagar 1st Phase",
+                "addressLocality": "Bangalore",
+                "addressRegion": "Karnataka",
+                "postalCode": "560060",
+                "addressCountry": "IN"
+              },
+              "email": "mailto:jzfanai@gmail.com",
+              "telephone": "+918837238364",
+              "sameAs": [
+                "https://www.linkedin.com/in/jzfanai/",
+                "https://www.instagram.com/jzfanai"
+              ],
+              "knowsAbout": [
+                "Search Engine Optimization",
+                "International SEO",
+                "Technical SEO",
+                "Local SEO",
+                "SaaS Marketing",
+                "Answer Engine Optimization",
+                "Generative Engine Optimization",
+                "Online Reputation Management"
+              ]
+            }
+          }
+        ]
       }
     </script>
   </head>

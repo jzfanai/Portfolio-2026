@@ -1,16 +1,18 @@
-import { useEffect, useState } from 'react';
-import { ArrowLeft, ArrowUpRight, Clock } from 'lucide-react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { ArrowLeft, ArrowUpRight, ChevronRight, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Header } from './Header';
 import { Newsletter } from './Newsletter';
 import { Footer } from './Footer';
-import { ARTICLES, type ArticleItem } from '../data/articles';
+import { ARTICLES, type ArticleItem, type ArticleRelatedLink } from '../data/articles';
 import { SOCIAL_LINKS } from '../data/socialLinks';
 import { MOTION_DURATION, MOTION_EASE, VIEWPORT_ONCE } from '../animations/motionConfig';
 
 interface ArticlesHubPageProps {
   initialArticleId?: string | null;
   onBackHome: () => void;
+  onNavigateSection: (sectionId: string) => void;
+  onSelectArticleRoute: (articleId: string | null) => void;
   onDownloadCV: () => void;
   onOpenContact: () => void;
   onOpenPrivacy: () => void;
@@ -22,6 +24,8 @@ const HUB_FORE_LETTERS = ['A', 'R', 'T', 'I', 'C', 'L', 'E', 'S'] as const;
 export function ArticlesHubPage({
   initialArticleId = null,
   onBackHome,
+  onNavigateSection,
+  onSelectArticleRoute,
   onDownloadCV,
   onOpenContact,
   onOpenPrivacy,
@@ -48,7 +52,77 @@ export function ArticlesHubPage({
 
   const handleOpenArticle = (article: ArticleItem) => {
     setActiveArticle(article);
+    onSelectArticleRoute(article.id);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleInternalTarget = (target: string) => {
+    if (target.startsWith('/section#')) {
+      const sectionId = target.replace('/section#', '');
+      onNavigateSection(sectionId);
+      return;
+    }
+    if (target.startsWith('/articles/')) {
+      const slug = target.replace('/articles/', '');
+      const found = ARTICLES.find((a) => a.id === slug);
+      if (found) handleOpenArticle(found);
+      return;
+    }
+    if (target === '/contact') {
+      onOpenContact();
+      return;
+    }
+    if (target === '/cv') {
+      onDownloadCV();
+    }
+  };
+
+  const handleRelatedCardClick = (item: ArticleRelatedLink) => {
+    if (item.action === 'section') {
+      onNavigateSection(item.targetId);
+    } else if (item.action === 'article') {
+      const found = ARTICLES.find((a) => a.id === item.targetId);
+      if (found) handleOpenArticle(found);
+    } else if (item.action === 'contact') {
+      onOpenContact();
+    } else if (item.action === 'cv') {
+      onDownloadCV();
+    }
+  };
+
+  /**
+   * Safely parses [[anchor text|target]] inline link tokens into semantic <a> tags
+   */
+  const renderRichParagraph = (text: string): ReactNode[] => {
+    const parts = text.split(/(\[\[[^\]]+\]\])/g);
+    return parts.map((part, idx) => {
+      const match = part.match(/^\[\[([^|]+)\|([^\]]+)\]\]$/);
+      if (!match) {
+        return <span key={idx}>{part}</span>;
+      }
+      const [, label, target] = match;
+      const href = target.startsWith('/section#')
+        ? `/#${target.replace('/section#', '')}`
+        : target === '/contact'
+          ? '/#contact'
+          : target === '/cv'
+            ? '/#cv'
+            : target;
+
+      return (
+        <a
+          key={idx}
+          href={href}
+          onClick={(e) => {
+            e.preventDefault();
+            handleInternalTarget(target);
+          }}
+          className="text-[#71c1ad] underline decoration-[#71c1ad]/45 underline-offset-4 hover:decoration-[#71c1ad] hover:text-white transition-colors font-medium"
+        >
+          {label}
+        </a>
+      );
+    });
   };
 
   return (
@@ -69,22 +143,62 @@ export function ArticlesHubPage({
       </div>
 
       <main className="relative z-10 flex-1 w-full max-w-[1380px] mx-auto px-5 sm:px-8 lg:px-12 pb-16">
-        {/* Top Back Navigation */}
-        <div className="pt-2 pb-6 flex items-center justify-between gap-4 border-b border-white/10">
-          <button
-            type="button"
-            onClick={() => {
-              if (activeArticle) {
-                setActiveArticle(null);
-              } else {
-                onBackHome();
-              }
-            }}
-            className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-[#A5A5A5] hover:text-[#71c1ad] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#71c1ad]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{activeArticle ? 'Back to Articles Hub' : 'Back to Portfolio'}</span>
-          </button>
+        {/* Top Back Navigation & Semantic Breadcrumb */}
+        <div className="pt-2 pb-6 flex flex-wrap items-center justify-between gap-4 border-b border-white/10">
+          <div className="flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                if (activeArticle) {
+                  setActiveArticle(null);
+                  onSelectArticleRoute(null);
+                } else {
+                  onBackHome();
+                }
+              }}
+              className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.22em] text-[#A5A5A5] hover:text-[#71c1ad] transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#71c1ad]"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>{activeArticle ? 'Back to Articles Hub' : 'Back to Portfolio'}</span>
+            </button>
+
+            <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-1.5 text-[11px] text-[#707070]">
+              <a
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onBackHome();
+                }}
+                className="hover:text-white transition-colors"
+              >
+                Home
+              </a>
+              <ChevronRight className="w-3 h-3" aria-hidden="true" />
+              {activeArticle ? (
+                <>
+                  <a
+                    href="/articles"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveArticle(null);
+                      onSelectArticleRoute(null);
+                    }}
+                    className="hover:text-white transition-colors"
+                  >
+                    Articles Hub
+                  </a>
+                  <ChevronRight className="w-3 h-3" aria-hidden="true" />
+                  <span className="text-[#71c1ad] truncate max-w-[260px]" aria-current="page">
+                    {activeArticle.title}
+                  </span>
+                </>
+              ) : (
+                <span className="text-[#71c1ad]" aria-current="page">
+                  Articles Hub
+                </span>
+              )}
+            </nav>
+          </div>
 
           <div className="flex items-center gap-3">
             {SOCIAL_LINKS.map((social) => (
@@ -160,33 +274,66 @@ export function ArticlesHubPage({
                     </h2>
                     <div className="space-y-4">
                       {section.paragraphs.map((para, pIdx) => (
-                        <p key={pIdx}>{para}</p>
+                        <p key={pIdx}>{renderRichParagraph(para)}</p>
                       ))}
                     </div>
                   </section>
                 ))}
               </div>
 
-              {/* Next / Related Articles Strip */}
+              {/* Relevant Services & Portfolio Internal Links */}
               <div className="mt-14 pt-8 border-t border-white/15">
                 <p className="text-[11px] uppercase tracking-[0.24em] text-[#71c1ad] mb-5">
+                  Relevant Services &amp; Portfolio Pages
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {activeArticle.relatedLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleRelatedCardClick(link);
+                      }}
+                      className="text-left border border-white/15 bg-[#050606] hover:border-[#71c1ad]/70 p-4 transition-colors group flex flex-col justify-between gap-2.5"
+                    >
+                      <div>
+                        <h3 className="text-xs font-semibold uppercase tracking-[0.08em] text-white group-hover:text-[#71c1ad] transition-colors inline-flex items-center gap-1.5">
+                          <span>{link.label}</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
+                        </h3>
+                        <p className="mt-1.5 text-[11px] leading-relaxed text-[#A5A5A5]">
+                          {link.description}
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Next / Related Articles Strip */}
+              <div className="mt-12 pt-8 border-t border-white/10">
+                <p className="text-[11px] uppercase tracking-[0.24em] text-[#A5A5A5] mb-5">
                   More Editorial Insights
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {ARTICLES.filter((a) => a.id !== activeArticle.id).map((other) => (
-                    <button
+                    <a
                       key={other.id}
-                      type="button"
-                      onClick={() => handleOpenArticle(other)}
-                      className="text-left border border-white/15 bg-[#050606] hover:border-[#71c1ad]/60 p-4 transition-colors cursor-pointer group"
+                      href={`/articles/${other.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleOpenArticle(other);
+                      }}
+                      className="text-left border border-white/15 bg-[#050606] hover:border-[#71c1ad]/60 p-4 transition-colors cursor-pointer group block"
                     >
                       <span className="text-[10px] font-mono tabular-nums text-[#71c1ad]">
                         0{other.index} · {other.readTime}
                       </span>
-                      <h2 className="mt-2 text-xs font-medium uppercase tracking-[0.06em] text-white group-hover:text-[#71c1ad] transition-colors line-clamp-2">
+                      <h3 className="mt-2 text-xs font-medium uppercase tracking-[0.06em] text-white group-hover:text-[#71c1ad] transition-colors line-clamp-2">
                         {other.title}
-                      </h2>
-                    </button>
+                      </h3>
+                    </a>
                   ))}
                 </div>
               </div>
@@ -230,8 +377,28 @@ export function ArticlesHubPage({
 
                 <p className="text-xs sm:text-sm text-[#A5A5A5] max-w-xl leading-relaxed mb-7">
                   Editorial essays, organic growth perspectives, and search strategy notes across{' '}
-                  <span className="text-[#71c1ad]">SEO</span>,{' '}
-                  <span className="text-[#71c1ad]">AEO / GEO</span>, and brand stewardship.
+                  <a
+                    href="/#expertise"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onNavigateSection('expertise');
+                    }}
+                    className="text-[#71c1ad] underline decoration-[#71c1ad]/40 underline-offset-4 hover:text-white transition-colors"
+                  >
+                    SEO
+                  </a>
+                  ,{' '}
+                  <a
+                    href="/#expertise"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onNavigateSection('expertise');
+                    }}
+                    className="text-[#71c1ad] underline decoration-[#71c1ad]/40 underline-offset-4 hover:text-white transition-colors"
+                  >
+                    AEO / GEO
+                  </a>
+                  , and brand stewardship.
                 </p>
 
                 {/* Category Filter Tabs */}
@@ -320,10 +487,18 @@ export function ArticlesHubPage({
                         </div>
 
                         <div className="pt-3 border-t border-white/10 flex items-center justify-between">
-                          <span className="text-[11px] uppercase tracking-[0.22em] text-[#71c1ad] font-medium inline-flex items-center gap-1.5">
+                          <a
+                            href={`/articles/${article.id}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleOpenArticle(article);
+                            }}
+                            className="text-[11px] uppercase tracking-[0.22em] text-[#71c1ad] font-medium inline-flex items-center gap-1.5"
+                          >
                             <span>Read Article</span>
                             <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                          </span>
+                          </a>
                         </div>
                       </div>
                     </article>
@@ -342,6 +517,7 @@ export function ArticlesHubPage({
         onOpenContact={onOpenContact}
         onOpenArticlesHub={() => {
           setActiveArticle(null);
+          onSelectArticleRoute(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onNavigateHome={onBackHome}
