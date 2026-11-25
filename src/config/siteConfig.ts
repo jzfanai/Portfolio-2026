@@ -38,8 +38,8 @@ export const SITE_CONFIG = {
    */
   cvPdfUrl: '/assets/documents/Jonathan_Fanai_CV.pdf',
   cvFileName: 'Jonathan_Fanai_CV.pdf',
-  cvGoogleDriveDownloadUrl: 'https://drive.google.com/uc?export=download&id=1oxZytNix2OV3DyaqzR9Mbg2ySOOdbkK7',
-  cvGoogleDriveViewUrl: 'https://drive.google.com/file/d/1oxZytNix2OV3DyaqzR9Mbg2ySOOdbkK7/view?usp=sharing',
+  cvGoogleDriveDownloadUrl: 'https://drive.google.com/uc?export=download&id=140wCoqL8K1tka9KkL0av5J6lFCZLmXnj',
+  cvGoogleDriveViewUrl: 'https://drive.google.com/file/d/140wCoqL8K1tka9KkL0av5J6lFCZLmXnj/view?usp=sharing',
   /**
    * Configure your email marketing provider endpoint (e.g. ConvertKit, Mailchimp, Resend)
    * when integrating backend newsletter subscriptions.
